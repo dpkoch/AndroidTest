@@ -1,0 +1,6 @@
+INDEX VERSION 1.126+/home/dpkoch/android/.metadata/.plugins/org.eclipse.jdt.core
+3172678146.index
+2606815945.index
+506270507.index
+1202768016.index
+827164144.index

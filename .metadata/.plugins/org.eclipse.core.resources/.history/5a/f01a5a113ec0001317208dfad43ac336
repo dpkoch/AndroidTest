@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sensors Test</string>
+    <string name="action_settings">Settings</string>
+    <string name="accel_label">Accelerometer:</string>
+    <string name="x_label">X:</string>
+    <string name="y_label">Y:</string>
+    <string name="default_value">N/A</string>
+    <string name="z_label">Z:</string>
+    <string name="default_label">Value:</string>
+    <string name="gyro_label">Rate Gyro:</string>
+    <string name="barometer_label">Barometer:</string>
+    <string name="not_detected">Not detected</string>
+    <string name="altitude_label">Change in Altitude:</string>
+
+</resources>

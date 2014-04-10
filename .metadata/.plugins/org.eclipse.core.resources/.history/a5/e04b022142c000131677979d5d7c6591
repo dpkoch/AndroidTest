@@ -1,0 +1,201 @@
+package com.danielpkoch.sensorstest;
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	
+	private SensorManager sensorManager;
+	private Sensor accel = null;
+	private Sensor gyro = null;
+	private Sensor barometer = null;
+	private Sensor rotationSensor = null;
+	
+	private TextView accelLabel;
+	private TextView accelX;
+	private TextView accelY;
+	private TextView accelZ;
+	
+	private TextView gyroLabel;
+	private TextView gyroX;
+	private TextView gyroY;
+	private TextView gyroZ;
+	
+	private TextView barometerLabel;
+	private TextView barometerValue;
+	
+	private TextView altitudeValue;
+	
+	private TextView rotationLabel;
+	private TextView yaw;
+	private TextView pitch;
+	private TextView roll;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        accelLabel = (TextView) findViewById(R.id.accel_label);
+        accelX = (TextView) findViewById(R.id.accel_x);
+        accelY = (TextView) findViewById(R.id.accel_y);
+        accelZ = (TextView) findViewById(R.id.accel_z);
+        
+        gyroLabel = (TextView) findViewById(R.id.gyro_label);
+        gyroX = (TextView) findViewById(R.id.gyro_x);
+        gyroY = (TextView) findViewById(R.id.gyro_y);
+        gyroZ = (TextView) findViewById(R.id.gyro_z);
+        
+        barometerLabel = (TextView) findViewById(R.id.barometer_label);
+        barometerValue = (TextView) findViewById(R.id.barometer);
+        
+        rotationLabel = (TextView) findViewById(R.id.rotation_label);
+        yaw = (TextView) findViewById(R.id.rotation_yaw);
+        pitch = (TextView) findViewById(R.id.rotation_pitch);
+        roll = (TextView) findViewById(R.id.rotation_roll);
+        
+        altitudeValue = (TextView) findViewById(R.id.altitude);
+        
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        
+        // accelerometer
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null)
+        {
+        	accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        	accelLabel.append(" " + accel.getName());
+        }
+        else
+        {
+        	accelLabel.append(" " + getResources().getString(R.string.not_detected));
+        }
+        
+        // gyro
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null)
+        {
+        	gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        	gyroLabel.append(" " + gyro.getName());
+        }
+        else
+        {
+        	gyroLabel.append(" " + getResources().getString(R.string.not_detected));
+        }
+        
+        // barometer
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null)
+        {
+        	barometer = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        	barometerLabel.append(" " + barometer.getName());
+        }
+        else
+        {
+        	barometerLabel.append(" " + getResources().getString(R.string.not_detected));
+        }
+        
+        // rotation vector sensor
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null)
+        {
+        	rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        	rotationLabel.append(" " + rotationSensor.getName());
+        }
+        else
+        {
+        	rotationLabel.append(" " + getResources().getString(R.string.not_detected));
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+    @Override
+    protected void onResume()
+    {
+    	super.onResume();
+    	
+    	if (accel != null)
+    		sensorManager.registerListener(listener, accel, SensorManager.SENSOR_DELAY_FASTEST);
+    	
+    	if (gyro != null)
+    		sensorManager.registerListener(listener, gyro, SensorManager.SENSOR_DELAY_FASTEST);
+    	
+    	if (barometer != null)
+    		sensorManager.registerListener(listener, barometer, SensorManager.SENSOR_DELAY_FASTEST);
+    	
+    	if (rotationSensor != null)
+    		sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+    
+    @Override
+    protected void onPause()
+    {
+    	super.onPause();
+    	sensorManager.unregisterListener(listener);
+    }
+
+    // sensor event listener
+	private SensorEventListener listener = new SensorEventListener()
+	{
+		private boolean barometer_first_time;
+		private float barometer_p0 = 0.0f;
+		
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			
+			if (event.sensor == accel)
+			{
+				accelX.setText(String.format("%.2f", event.values[0]));
+				accelY.setText(String.format("%.2f", event.values[1]));
+				accelZ.setText(String.format("%.2f", event.values[2]));
+			}
+			else if (event.sensor == gyro)
+			{
+				gyroX.setText(String.format("%.2f", event.values[0]));
+				gyroY.setText(String.format("%.2f", event.values[1]));
+				gyroZ.setText(String.format("%.2f", event.values[2]));
+			}
+			else if (event.sensor == barometer)
+			{
+				barometerValue.setText(String.format("%.2f", event.values[0]));
+				
+				if (barometer_first_time)
+				{
+					barometer_p0 = event.values[0];
+				}
+				
+				altitudeValue.setText(String.format("%.2f", SensorManager.getAltitude(barometer_p0, event.values[0])));
+			}
+			else if (event.sensor == rotationSensor)
+			{
+				float[] rotationVector = { event.values[0], event.values[1], event.values[2], event.values[3] };
+				float[] R = new float[9];
+				SensorManager.getRotationMatrixFromVector(R, rotationVector);
+				
+				float values[] = new float[3];
+				SensorManager.getOrientation(R, values);
+				
+				yaw.setText(String.format("%.2f", values[2]));
+				pitch.setText(String.format("%.2f", -values[1]));
+				roll.setText(String.format("%.2f", values[0]));
+			}
+		}
+		
+	};
+    
+}

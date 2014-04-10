@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.danielpkoch.sensortest.R.id"/>
+<fullyQualifiedTypeName name="android.hardware.Sensor"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="android.os.SystemClock"/>
+<fullyQualifiedTypeName name="android.text.Html"/>
+<fullyQualifiedTypeName name="com.danielpkoch.gpsdata.R.id"/>
+<fullyQualifiedTypeName name="com.danielpkoch.gpsdata.R.string"/>
+<fullyQualifiedTypeName name="com.danielpkoch.sensorstest.R.string"/>
+<fullyQualifiedTypeName name="com.danielpkoch.sensorstest.R.id"/>
+</qualifiedTypeNameHistroy>
